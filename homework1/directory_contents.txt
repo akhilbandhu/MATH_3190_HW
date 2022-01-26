@@ -1,0 +1,12 @@
+total 968
+drwxr-xr-x@ 5 akhil  staff     160 Jan 23 12:33 HW1
+-rw-r--r--@ 1 akhil  staff  257426 Jan 16 13:58 HW1.tar.gz
+-rw-r--r--  1 akhil  staff  232454 Jan 22 02:43 cbbga22.txt
+-rw-r--r--@ 1 akhil  staff     989 Jan 23 13:14 command_code.sh
+-rw-r--r--  1 akhil  staff       0 Jan 23 13:23 directory_contents.txt
+total 1000
+drwxr-xr-x@ 5 akhil  staff     160 Jan 23 12:33 HW1
+-rw-r--r--@ 1 akhil  staff  257426 Jan 16 13:58 HW1.tar.gz
+-rw-r--r--  1 akhil  staff  241838 Jan 23 02:43 cbbga22.txt
+-rw-r--r--@ 1 akhil  staff     989 Jan 23 13:14 command_code.sh
+-rw-r--r--  1 akhil  staff     316 Jan 23 13:23 directory_contents.txt
