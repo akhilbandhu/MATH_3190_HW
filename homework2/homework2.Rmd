@@ -1,0 +1,105 @@
+---
+title: "homework2"
+author: "Akhil Anand"
+date: "2/5/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r basketball}
+library(tidyverse)
+library(readr)
+basketball_data <- as_tibble(read.fwf('http://kenpom.com/cbbga22.txt', widths=c(11,24,3,23,4,4,21)))
+View(basketball_data)
+```
+
+Tackling question 3 
+Every code snippet is for one of the parts of the question
+
+Part a)
+Mutate where the game was played into a new column
+We are just going to use the second name column to do this
+
+The second piece of the code is to get the difference in the scores
+The absolute value function is used to not get any negative scores
+
+```{r question3a}
+basketball_data <- basketball_data %>%
+  mutate(Venue = V4)
+
+basketball_data <- basketball_data %>% 
+  mutate(score_difference = (abs(V3-V5)))
+```
+
+Arranging the data by where the game was played
+Arrange in ascending 
+change to desc(Venue) to arrange in descending order
+
+```{r question3b}
+basketball_data %>% arrange((Venue))
+
+```
+
+Removing the 6th and 7th columns
+As of now the columns have not been named so just using V6 and V7 
+in the select function.
+
+```{r question3c}
+basketball_data <- basketball_data %>% 
+  select(-V6, -V7)
+
+```
+
+
+filtering all games played in 2022
+
+
+```{r question3d}
+basketball_2022_data <- basketball_data %>% 
+  filter(as.Date(basketball_data$V1, format = "%m/%d/%Y") >= as.Date("2022/01/01"))
+
+team_func <- function(team_name) {
+  basketball_data %>% 
+    filter(grepl(team_name,V2) | grepl(team_name,V4))
+}
+```
+
+
+# team conference data
+https://www.kaggle.com/c/mens-machine-learning-competition-2018/data
+#got the data file from the above link
+Manipulation code
+First we join the tables with team names and conference names by team id
+Next we will merge the table with the conference name and conference acronym using the
+team_conference and Conferences table.
+
+we want to arrange in descending order and group by year to get the most recent conference 
+information for the team 
+
+After this we want to merge our main dataset with the team conference dataset
+
+```{r conference}
+  team_conference <- as_tibble(inner_join(TeamConferences, Teams, by="TeamID"))
+  team_conference <- as_tibble(inner_join(team_conference, Conferences, by = "ConfAbbrev"))
+  team_conference <- team_conference %>% 
+    group_by(LastD1Season) %>%
+    arrange(desc(Season))
+  team_conference <- subset(team_conference, LastSeasonID = "2018")
+  team_conference <- team_conference %>% distinct()
+  team_conference <- team_conference[,-c(1,2)]
+  basketball_data$TeamName <- as.factor(basketball_data$TeamName)
+  names(basketball_data)[2] <- "TeamName"
+```
+
+
+
+

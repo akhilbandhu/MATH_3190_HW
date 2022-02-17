@@ -1,0 +1,96 @@
+---
+title: "K-Means Package"
+author: "Akhil Anand"
+date: "2/14/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r install, eval = FALSE}
+install.packages(c("devtools","styler","testthat"))
+library(shiny)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r create}
+working_dir <- "/Users/akhil/MATH_3190/MATH_3190_HW/homework2"
+setwd("~/MATH_3190/MATH_3190_HW/homework2")
+devtools::create("kmeans")
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r license}
+usethis::use_mit_license()
+```
+
+## Adding Functions
+## K-Means Cluster calculation
+
+```{r document 0, eval=F}
+#' This function calculates the clusters from the given input
+#' 
+#' A more detailed description of what the function is and how
+#' it works. It may be a paragraph that should not be separated
+#' by any spaces. 
+#'
+#' @param clusters The number of clusters being used to plot \code{clusters}
+#'
+#'
+#' @return the number of cluster centers from the given input
+#'
+#' @keywords keywords
+#'
+#' @export
+#' 
+
+kmeans_func <- function(cluster) {
+  return(kmeans(cluster))
+}
+```
+
+
+```{r document 1, eval=F}
+#' This function plots the clusters from the output of the other function 
+#' 
+#' A more detailed description of what the function is and how
+#' it works. It may be a paragraph that should not be separated
+#' by any spaces. 
+#'
+#' @param dataframe The number of clusters being used to plot \code{clusters}
+#'
+#'
+#' @return the number of cluster centers from the given input
+#'
+#' @keywords keywords
+#'
+#' @export
+#' 
+
+plot_func <- function(dataframe, col) {
+         plot(dataframe, col = kmeans_func(iris[,c(input$xcol,input$ycol)], input$clusters)$cluster)
+}
+```
+
+
+```{r}
+devtools::install("kmeans")
+library(kmeans)
+```
+
+
+
+
+
