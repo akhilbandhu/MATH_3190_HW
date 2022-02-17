@@ -216,7 +216,6 @@ After this we want to merge our main dataset with the team conference dataset
 devtools::document()
 devtools::install()
 library(basketballpackage)
-?
 getwd()
 ```
 
