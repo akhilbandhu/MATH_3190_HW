@@ -1,0 +1,30 @@
+---
+title: "read_function"
+author: "Akhil Anand"
+date: "2/17/2022"
+output: html_document
+---
+
+```{r question1 0, eval=F}
+#' Function to read in the data
+#' 
+#' @param file_name the file we are reading from
+#'
+#' @export
+#'
+#' @return The function will return basketball data as a tibble
+#' 
+
+read_function <- function(fileUrl) {
+  basketball_data <- as_tibble(read.fwf(fileUrl, widths=c(11,24,3,23,4,4,21)))
+  return(basketball_data)
+}
+
+```
+
+
+```{r}
+devtools::document()
+devtools::install()
+library(basketballpackage)
+```

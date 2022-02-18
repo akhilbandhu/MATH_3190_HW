@@ -7,7 +7,6 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-install.packages(c("devtools","styler","testthat"))
 library(devtools)
 library(styler)
 library(testthat)
@@ -18,7 +17,7 @@ library(readr)
 # Creating the package
 
 ```{r create}
-devtools::create("basketballpackage")
+devtools::create("~/MATH-3190/basketballpackage")
 ```
 
 ## R Markdown
@@ -29,7 +28,7 @@ When you click the **Knit** button a document will be generated that includes bo
 ```{r question1 0, eval=F}
 #' Function to read in the data
 #' 
-#' @param file_name the file we are reading from
+#' @param fileUrl the file we are reading from
 #'
 #' @export
 #'
@@ -46,6 +45,7 @@ read_function <- function(fileUrl) {
 ```{r basketball}
 # 'http://kenpom.com/cbbga22.txt'
 View(basketball_data)
+getwd()
 ```
 
 Tackling question 3 
@@ -209,6 +209,7 @@ After this we want to merge our main dataset with the team conference dataset
   team_conference <- team_conference[,-c(1,2)]
   basketball_data$TeamName <- as.factor(basketball_data$TeamName)
   names(basketball_data)[2] <- "TeamName"
+  inner_join(basketball_data, team_conference, by = "TeamName")
 ```
 
 

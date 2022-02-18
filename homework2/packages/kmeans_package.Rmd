@@ -16,7 +16,6 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
 ```{r install, eval = FALSE}
-install.packages(c("devtools","styler","testthat"))
 library(shiny)
 ```
 
@@ -25,9 +24,7 @@ library(shiny)
 You can also embed plots, for example:
 
 ```{r create}
-working_dir <- "/Users/akhil/MATH_3190/MATH_3190_HW/homework2"
-setwd("~/MATH_3190/MATH_3190_HW/homework2")
-devtools::create("kmeans")
+devtools::create("~/MATH-3190/kmeanspackage")
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
@@ -79,7 +76,7 @@ kmeans_func <- function(selectedData, clusters) {
 #' @export
 #' 
 
-plot_func <- function(selectedDate, clusters) {
+plot_function <- function(selectedDate, clusters) {
     palette(c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3",
               "#FF7F00", "#FFFF33", "#A65628", "#F781BF", "#999999"))
     par(mar = c(5.1, 4.1, 0, 1))
@@ -90,6 +87,7 @@ plot_func <- function(selectedDate, clusters) {
 
 
 ```{r}
+devtools::document("~/MATH-3190/kmeanspackage")
 devtools::install("kmeans")
 library(kmeans)
 ```
