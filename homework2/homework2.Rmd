@@ -44,7 +44,8 @@ read_function <- function(fileUrl) {
 
 ```{r basketball}
 # 'http://kenpom.com/cbbga22.txt'
-View(basketball_data)
+View(basketball_data) 
+basketball_data <- as_tibble(read.fwf('http://kenpom.com/cbbga22.txt', widths=c(11,24,3,23,4,4,21), strip.white = T))
 getwd()
 ```
 
@@ -184,6 +185,42 @@ team_func <- function(team_name) {
 }
 ```
 
+```{r function3e 0, eval = F}
+#' Function that will summarize the data for a team win loss percentage record
+#' 
+#' @param basketball_data the data frame we are using to do the manipulation
+#'
+#' @export
+#' 
+
+summarize_function <- function(basketball_data, team_name) {
+  data <- basketball_data %>% 
+    filter(grepl(team_name,TeamName)) %>%
+    mutate(win = ifelse(V3 > V5,1,0))
+  data2 <- basketball_data %>%
+    filter(grepl(team_name,V4)) %>%
+    mutate(win = ifelse(V5 > V3,1,0))
+  data <- rbind(data,data2)
+  win_percentage <- sum(data$win)/nrow(data)
+  return(win_percentage)
+}
+```
+
+
+```{r}
+data <- basketball_data %>% 
+  filter(grepl("Southern Utah",TeamName)) %>%
+  mutate(win = ifelse(V3 > V5,1,0))
+data2 <- basketball_data %>%
+  filter(grepl("Southern Utah",V4)) %>%
+  mutate(win = ifelse(V5 > V3,1,0))
+data <- rbind(data,data2)
+
+win_percentage <- sum(data$win)/nrow(data)
+
+View(data)
+  
+```
 
 # team conference data
 https://www.kaggle.com/c/mens-machine-learning-competition-2018/data
@@ -209,12 +246,13 @@ After this we want to merge our main dataset with the team conference dataset
   team_conference <- team_conference[,-c(1,2)]
   basketball_data$TeamName <- as.factor(basketball_data$TeamName)
   names(basketball_data)[2] <- "TeamName"
-  inner_join(basketball_data, team_conference, by = "TeamName")
+  team_conference <- team_conference %>% distinct()
+  basketball_data <- inner_join(basketball_data, team_conference, by = "TeamName")
 ```
 
 
 ```{r}
-devtools::document()
+devtools::document("~/MATH-3190/basketballpackage")
 devtools::install()
 library(basketballpackage)
 getwd()
