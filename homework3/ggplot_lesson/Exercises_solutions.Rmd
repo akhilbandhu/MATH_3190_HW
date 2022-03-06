@@ -1,0 +1,368 @@
+---
+title: "ggplot2 Exercise Solutions"
+author: "Aubrey Odom-Mabey"
+date: "2/14/2022"
+output: html_document
+---
+
+First, we'll load the main tidyverse library.
+
+```{R}
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(magrittr)
+})
+```
+
+# Exercise 1 - Simple point and line plots
+
+## 1a) Weight Chart
+
+```{R weight}
+# We'll plot out the data in the weight_chart.txt file.
+# Let's load it and look at it first.
+wt <- read_delim("weight_chart.txt")
+
+head(wt)
+```
+
+We'll start with a simple plot, just setting the minimum aesthetics.
+
+```{R}
+wt %>%
+ggplot(aes(x = Age, y = Weight)) + 
+  geom_point()
+```
+
+Now we can customize this a bit by adding fixed aesthetics to the ```geom_point()``` function.
+
+```{R}
+wt %>%
+ggplot(aes(x = Age, y = Weight)) + 
+  geom_point(col = "blue2", size = 3)
+```
+
+Now repeat, but with a different geometry.
+
+```{R}
+wt %>%
+ggplot(aes(x = Age, y = Weight)) + 
+  geom_line()
+```
+
+Finally, combine the two geometries.
+
+```{R}
+wt %>%
+ggplot(aes(x = Age, y = Weight)) + 
+  geom_point(col = "blue2", size = 3) + 
+  geom_line()
+```
+
+## 1b) Chromosome Position
+
+Now let's look at the ```chromosome_position_data.txt``` file.
+
+```{R chromosome}
+chr <- read_delim("chromosome_position_data.txt")
+
+head(chr)
+```
+
+We have the data in three separate columns at the moment so we need to use ```pivot_longer``` to put them into a single column.
+
+```{R}
+
+newchr <- chr %>%
+  pivot_longer(cols = c("Mut1", "Mut2", "WT"), names_to = "Sample",
+               values_to = "Value") 
+
+head(newchr)
+```
+
+Now we can plot out a line graph of the position vs value for each of the samples.  We'll use color to distiguish the lines for each sample.
+
+```{R}
+newchr %>%
+ggplot(aes(x = Position, y = Value, color = Sample)) +
+  geom_line(size = 1)
+```
+
+## 1c) Genomes
+
+Finally, we're going to look at the genome size vs number of chromosomes and color it by domain in our genomes data.
+
+```{R genomes}
+genomes <- read_csv("genomes.csv")
+glimpse(genomes)
+```
+
+To get at the Domain, we’ll need to split apart the Groups field.
+```{r}
+genomes %<>%
+  separate(col = Groups, into = c("Domain", "Kingdom", "Class"), sep = ";")
+```
+
+Now we can draw the plot.
+````{R}
+genomes %>%
+  ggplot(aes(x = log10(Size), y = Chromosomes, col = Domain)) +
+  geom_point()
+
+```
+
+# Exercise 2 - Barplots and Distributions
+
+## 2a) Small File
+
+We want a barplot of the lengths of samples in category A.
+
+```{R small file}
+small_file <- read_tsv("small_file.txt")
+
+head(small_file)
+```
+
+Since there's only one measure per sample, there is no summarizing to be done, so we use ```geom_col``` rather than ```geom_bar```.
+
+```{r}
+small_file %>%
+  filter(Category == "A") %>%
+  ggplot(aes(x = Sample, y = Length)) +
+  geom_col()
+```
+
+We will create a bar plot of the mean length for each category.
+```{r}
+small_file %>%
+  ggplot(aes(x = Category, y = Length)) +
+  geom_bar(stat = "summary", fun = "mean")
+
+```
+
+Next we want a chart (```geom_jitter```) of all of the lengths for each category.  We need to use ```height = 0``` in the ```geom_jitter``` to ensure that we don't adjust the height of the points, only their width.
+
+```{r}
+set.seed(90)
+small_file %>%
+  ggplot(aes(x = Category, y = Length)) +
+  geom_jitter(height = 0)
+```
+
+Whilst this worked it's not very easy to tell the categories apart so we'll tweak it to make it clearer.
+
+```{r}
+set.seed(90)
+small_file %>%
+  ggplot(aes(x = Category, y = Length, color = Category)) +
+  geom_jitter(height = 0, width = 0.3, show.legend = FALSE, size = 4)
+```
+
+
+## 2b) Expression Data
+
+Plot the distribution of expression values.
+
+```{r}  
+expression <- read_tsv("expression.txt")
+
+head(expression)
+```
+
+Let's try the plots in a couple of ways.
+
+```{r}
+expression %>%
+  ggplot(aes(Expression)) +
+  geom_histogram(fill = "pink2", color = "black", bins = 30)
+```
+
+```{r}
+expression %>%
+  ggplot(aes(Expression)) +
+  geom_density(fill = "pink2", color = "black")
+```
+
+We could also play around with the resolution in either of these plots.
+
+Either increasing the resolution:
+
+```{r}
+expression %>%
+  ggplot(aes(Expression)) +
+  geom_histogram(fill = "pink2", color = "black", binwidth = 0.2)
+```
+
+..or decreasing it.
+
+```{r}
+expression %>%
+  ggplot(aes(Expression)) +
+  geom_density(fill = "pink2", color = "black", bw = 2)
+```
+
+## 2c) Cancer
+
+Plot the number of male deaths for all sites.
+
+```{r}
+cancer <- read_csv("cancer_stats.csv")
+head(cancer)
+```
+
+```{r}
+# Not showing everything
+cancer %>%
+  ggplot(aes(x = str_to_sentence(Site), y = `Male Deaths`)) + 
+  geom_col() +
+  labs(x = "Site") 
+
+# Rotate labels
+cancer %>%
+  ggplot(aes(x = str_to_sentence(Site), y = `Male Deaths`)) + 
+  geom_col() +
+  labs(x = "Site") +
+  theme(axis.text.x = element_text(angle = -90, hjust = 0))
+```
+
+
+Now, let's just show the 5 highest.
+
+
+```{r}
+cancer %>%
+  arrange(desc(`Male Deaths`)) %>%
+  slice(1:5) %>%
+  ggplot(aes(x = str_to_sentence(Site), y = `Male Deaths`)) + 
+  labs(x = "Site") +
+  geom_col()
+```
+
+Now it works, but even though we fed it sorted data the plot still comes out in alphabetical order.
+
+
+# 2d) Child variants
+
+Plot the MutantRead distributions for good (`QUAL == 200`) and bad (`QUAL < 200`) variants.
+
+
+```{r}
+child <- read_csv("Child_Variants.csv", guess_max = 1000000)
+
+head(child)
+```
+
+We need to make the good/bad category column.
+
+```{r}
+child %<>%
+  mutate(`Good or not` = if_else(QUAL == 200, "Good", "Bad"))
+
+head(child)
+```
+
+Now we can plot it.  I did it on a log scale to make it a bit easier to look at.
+
+```{r}
+child %>%
+  ggplot(aes(x = `Good or not`, y = log(MutantReads))) +
+  geom_violin(fill = "pink2", color = "black")
+```
+
+
+# Exercise 3 - Annotation, Scaling and Colors
+
+## 3a) Themes
+
+Set a theme and then redraw some stuff to see that it changes.
+
+
+```{r}
+theme_set(theme_bw(base_size = 16))
+```
+
+```{r}
+child %>%
+  ggplot(aes(x = `Good or not`, y = log2(MutantReads))) +
+  geom_violin(fill = "pink2", color = "black") 
+```
+
+Yep, that definitely looks different, as will every plot from now on.  If we wanted to change it for a specific plot then we could easily do that too.
+
+```{r}
+child %>%
+  ggplot(aes(x = `Good or not`, y = log2(MutantReads))) +
+  geom_violin(fill = "pink2", color = "black") +
+  theme_dark()
+```
+
+## 3b) Cancer
+
+Redraw the previous bargraph, but with the axes flipped so we can see all of the categories and we don't have to filter them.  I'm also going to order the results by the data to make the plot clearer, and I've removed the cancers which males can't get.
+
+
+```{r fig.height=7, fig.width=5}
+cancer %>%
+  filter(!is.na(`Male Deaths`)) %>%
+  ggplot(aes(x = reorder(str_to_sentence(Site), `Male Deaths`), y = `Male Deaths`)) + 
+  geom_col() +
+  xlab("Site")+
+  coord_flip()
+```
+
+## 3c) Brain Bodyweight
+
+Plot a scatterplot of brainweight vs bodyweight and make various customizations.
+
+* Put the title in the center
+
+* Make the axes log scale
+
+* Color by Category but using a ColorBrewer palette
+
+* Change the ordering of the categories
+
+
+```{r}
+brain <- read_tsv("brain_bodyweight.txt")
+
+head(brain)
+```
+
+
+```{r fig.height=7, fig.width=9}
+brain %>%
+  mutate(Category = factor(Category, levels = c("Extinct", "Wild", "Domesticated"))) %>%
+  ggplot(aes(x = brain, y = body, color = Category))+
+  geom_point(size = 4)+
+  ggtitle("Brain vs Body Weight")+
+  xlab("Brainweight (g)") +
+  ylab("Bodyweight (kg)") +
+  scale_y_log10() +
+  scale_x_log10() +
+  scale_color_brewer(palette = "Set1")
+```
+
+Finally do a barplot of all species showing their brainweight, but colored by their bodyweight and using a custom color scheme.
+
+```{r}
+brain %>%
+  ggplot(aes(x = Species, y = brain, fill = log(body))) +
+  geom_col() +
+  coord_flip() +
+  scale_fill_continuous(type = "viridis") +
+  labs(y = "Brain Weight")
+  
+```
+
+
+
+
+
+
+
+
+
+
+
+

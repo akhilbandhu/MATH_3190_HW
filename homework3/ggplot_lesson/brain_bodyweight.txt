@@ -1,0 +1,28 @@
+Species	Category	body	brain
+Cow	Domesticated	465	423
+Grey Wolf	Wild	36.33	119.5
+Goat	Domesticated	27.66	115
+Guinea Pig	Wild	1.04	5.5
+Diplodocus	Extinct	11700	50
+Asian Elephant	Wild	2547	4603
+Donkey	Domesticated	187.1	419
+Horse	Domesticated	521	655
+Potar Monkey	Wild	10	115
+Cat	Domesticated	3.3	25.6
+Giraffe	Wild	529	680
+Gorilla	Wild	207	406
+Human	Wild	62	1320
+African Elephant	Wild	6654	5712
+Triceratops	Extinct	9400	70
+Rhesus Monkey	Wild	6.8	179
+Kangaroo	Wild	35	56
+Hamster	Wild	0.12	1
+Mouse	Wild	0.023	0.4
+Rabbit	Wild	2.5	12.1
+Sheep	Domesticated	55.5	175
+Jaguar	Wild	100	157
+Chimpanzee	Wild	52.16	440
+Brachiosaurus	Extinct	87000	154.5
+Rat	Wild	0.28	1.9
+Mole	Wild	0.122	3
+Pig	Domesticated	192	180
