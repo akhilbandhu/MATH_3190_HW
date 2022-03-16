@@ -245,6 +245,8 @@ After this we want to merge our main dataset with the team conference dataset
   team_conference <- team_conference %>% distinct()
   team_conference <- team_conference[,-c(1,2)]
   basketball_data$TeamName <- as.factor(basketball_data$TeamName)
+  basketball_data <- trimws(basketball_data)
+  team_conference <- trimws(team_conference)
   names(basketball_data)[2] <- "TeamName"
   team_conference <- team_conference %>% distinct()
   basketball_data <- inner_join(basketball_data, team_conference, by = "TeamName")
