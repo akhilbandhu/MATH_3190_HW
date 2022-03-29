@@ -1,0 +1,108 @@
+---
+title: "MATH 3190 Homework 4"
+author: "Maximum Likelihood Estimators"
+date: "Due 3/28/2022"
+output: pdf_document
+---
+
+
+Here you will practice what you learned in the maximum likelihood estimation. Please turn this in as an RMarkdown document. You can either add your solution in Latex or you can write it by hand and input a scanned version or picture into the R Markdown. 'Turn it in' by uploading to your GitHub repository. 
+
+\begin{enumerate}
+\item (20 points) Suppose ${\bf x}=(x_1,\ldots, x_N)^T$ follow a Poisson distribution with a parameter $\lambda>0$ and p.m.f. given by 
+$$P(x=k|\lambda)=\frac{\lambda^k e^{-\lambda}}{k!}.$$
+Answer the following questions:
+    \begin{enumerate}
+    \item Using {\bf ggplot}, plot the Poisson pmf for $k=0,1,\ldots,10$ when $\lambda=5$. 
+    \item Asummining ${\bf x}$ is observed, give the likelihood $L(\lambda|{\bf x})$ and log-likelihood $l(\lambda|{\bf x})$ functions.
+    \begin{enumerate}
+        \item Likelihood Function \\
+$$L(\lambda|x_1,\ldots,x_{10})=\prod_{i = 1}^{10} \frac{\lambda^{x_i} e^{-\lambda}}{x_i!}.$$ \\
+        \item Log-Likelihood function \\
+        $$l(\lambda|x_1,\ldots,x_{n})=\ln(\prod_{i = 1}^{n} \frac{\lambda^{x_i} e^{-\lambda}}{x_i!}).$$ \\
+        Simplifying:
+        $$l(\lambda|x_1,\ldots,x_{n})=\prod_{i = 1}^{n} \ln(\frac{\lambda^{x_i} e^{-\lambda}}{x_i!}).$$ 
+        
+        $$l(\lambda|x_1,\ldots,x_{n})=\prod_{i = 1}^{n} ({x_i}\ln(\lambda) + \ln(e^{-\lambda})-\ln({x_i!})).$$ 
+        
+        $$l(\lambda|x_1,\ldots,x_{n})=\prod_{i = 1}^{n} ({x_i}\ln(\lambda) - {\lambda}-\ln({x_i!})).$$ 
+        
+        $$l(\lambda|x_1,\ldots,x_{n})=-n\lambda+\ln(\lambda)\sum_{i = 1}^{n} {x_i} -\sum_{i=1}^{n}\ln({x_i!}).$$ 
+        
+    \end{enumerate}
+    \item Find the Maximum Likelihood Estimator (MLE) $\hat\lambda$ for $\lambda$.
+    \begin{enumerate}
+        \item Calculate the derivative of log likelihood function with respect to $\lambda$.
+        $$\frac{d}{d\lambda}(l(\lambda|x_1,\ldots,x_{n}))=\frac{d}{d\lambda}(-n\lambda+\ln(\lambda)\sum_{i = 1}^{n} {x_i} -\sum_{i=1}^{n}\ln({x_i!})).$$ 
+        
+        $$\frac{d}{d\lambda}(l(\lambda|x_1,\ldots,x_{n}))=-10+\frac{1}{\lambda}\sum_{i = 1}^{n} {x_i}.$$ 
+        
+        \item Let's set the derivative to 0 to get the MLE.
+        $$-10+\frac{1}{\lambda}\sum_{i = 1}^{n} {x_i} = 0$$ 
+        
+        $$\lambda = \frac{1}{n}\sum_{i = 1}^{n} {x_i}$$ 
+    \end{enumerate}
+    \item Show that your estimator is in fact a maximum: i.e., check the boundary values of the log-likelihood, and check that the second derivative of the log-likelihood is zero everywhere.
+    \begin{enumerate}
+        \item Checking if the second derivative is zero everywhere.
+        $$\frac{d^2}{d\lambda^2}(l(\lambda|x_1,\ldots,x_{n}))=\frac{-1}{\lambda^2}\sum_{i = 1}^{n} {x_i}.$$ 
+    \end{enumerate}
+    \end{enumerate}
+
+\item (20 points) Suppose ${\bf x}=(x_1,\ldots, x_N)^T$ are $iid$ random variables with p.d.f. given by
+$$f(x|\theta)=\theta x^{\theta-1},\ 0\le x\le 1,\ 0<\theta<\infty.$$
+    \begin{enumerate}
+    \item Using {\bf ggplot}, plot the pdf for an individual $x_i$ given $\theta=0.5$ and also for $\theta=5$. 
+    \item Give the likelihood $L(\theta|{\bf x})$ and log-likelihood $l(\theta|{\bf x})$ functions.
+    \begin{enumerate}
+        \item Likelihood Function \\
+$$L(\theta|x_1,\ldots,x_{n})=\prod_{i = 1}^{n}\theta x_{i}^{\theta-1}$$ \\
+        \item Log-Likelihood function \\
+        $$l(\lambda|x_1,\ldots,x_{n})=\ln(\prod_{i = 1}^{n}\theta x_{i}^{\theta-1})$$ 
+        Simplifying:
+        $$l(\lambda|x_1,\ldots,x_{n})=\sum_{i = 1}^{n}\ln(\theta x_{i}^{\theta-1})$$ 
+        $$l(\lambda|x_1,\ldots,x_{n})=n\ln(\theta) +  (\theta-1)\sum_{i = 1}^{n}\ln(x_{i})$$ 
+    \end{enumerate}
+    \item Find the Maximum Likelihood Estimator (MLE) $\hat\theta$ for $\theta$.
+    \begin{enumerate}
+        \item Calculate the derivative of log likelihood function with respect to $\theta$.
+        $$\frac{d}{d\theta}(l(\theta|x_1,\ldots,x_{n}))=\frac{d}{d\theta}(n\ln(\theta) +  (\theta-1)\sum_{i = 1}^{n}\ln(x_{i})).$$
+        $$\frac{d}{d\theta}(l(\theta|x_1,\ldots,x_{n})) = \frac{n}{\theta} + \sum_{i = 1}^{n}\ln(x_{i})$$
+        \item Let's set the derivative to 0
+        $$\frac{n}{\theta} + \sum_{i = 1}^{n}\ln(x_{i}) = 0$$
+        $$\frac{n}{\theta} = -\sum_{i = 1}^{n}\ln(x_{i}) $$
+        $$\theta = \frac{-n}{\sum_{i = 1}^{n}\ln(x_{i})} $$
+
+    \end{enumerate}
+    \item Show that your estimator is in fact a maximum: i.e., check the boundary values of the log-likelihood, and check that the second derivative of the log-likelihood is zero everywhere.
+    \end{enumerate}
+
+\item (20 points) Suppose ${\bf x}=(x_1,\ldots, x_N)^T$ are $iid$ random variables from a $Normal(0,\sigma^2)$ distribution. The pdf is given by
+$$f(x|\sigma^2)=\left(\frac{1}{2\pi\sigma^2}\right)^{1/2}e^{-\frac{x^2}{2\sigma^2}},\ -\infty < x < \infty,\ \sigma^2>0.$$
+Find the Maximum Likelihood Estimator (MLE) $\hat\sigma^2$ for $\sigma^2$. Is it what you thought it would be? Why or why not? 
+\begin{enumerate}
+    \item Likelihood function
+    $$L(\sigma^2|x)=\prod_{i=1}^{n}\left(\frac{1}{2\pi\sigma^2}\right)^{1/2}e^{-\frac{x_i^2}{2\sigma^2}}$$
+    \item Log Likelihood function
+    $$l(\sigma^2|x)=\ln(\prod_{i=1}^{n}\left(\frac{1}{2\pi\sigma^2}\right)^{1/2}e^{-\frac{x_i^2}{2\sigma^2}})$$
+    
+    $$l(\sigma^2|x)=\sum_{i=1}^{n}(\ln((\frac{1}{2\pi\sigma^2})^{1/2})+ \ln(e^{-\frac{x_i^2}{2\sigma^2}}))$$
+    
+    $$l(\sigma^2|x)=\sum_{i=1}^{n}(\frac{-1}{2}\ln(2\pi\sigma^2)-{\frac{x_i^2}{2\sigma^2}})$$
+    
+    $$l(\sigma^2|x)=\sum_{i=1}^{n}(\frac{-1}{2}\ln(2\pi) - \frac{1}{2}\ln(\sigma^2)-{\frac{x_i^2}{2\sigma^2}})$$
+    
+    $$l(\sigma^2|x)=\sum_{i=1}^{n}(\frac{-1}{2}\ln(2\pi) - \ln(\sigma)-{\frac{x_i^2}{2\sigma^2}})$$
+    
+    $$l(\sigma^2|x)=(\frac{-n}{2}\ln(2\pi) - n\ln(\sigma)-\sum_{i=1}^{n}{\frac{x_i^2}{2\sigma^2}})$$
+    
+    \item Now let's take the derivative with respect to $\sigma$
+    $$\frac{-n}{\sigma} - \sum_{i=1}^{n}{\frac{x_i^2}{\sigma^3}} = 0$$
+    
+    $$n = \sum_{i=1}^{n}{\frac{x_i^2}{\sigma^2}}$$
+    $$\sigma^2 = \sum_{i=1}^{n}\frac{x_i^2}{n}$$
+    
+    \item Yes, the MLE is what I thought it would be since the maximum likelihood estimated for $\sigma^2$ is the variance of the measurements
+\end{enumerate}
+\end{enumerate}
+
