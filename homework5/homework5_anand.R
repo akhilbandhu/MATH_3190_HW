@@ -12,3 +12,6 @@ ggplot(
   geom_line()
   
 
+# Question 2
+# Using ggplot, plot the pdf for an individual xi given θ = 0.5 and also for θ = 5
+
