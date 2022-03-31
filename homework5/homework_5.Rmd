@@ -5,7 +5,6 @@ date: "Due 3/28/2022"
 output: pdf_document
 ---
 
-
 Here you will practice what you learned in the maximum likelihood estimation. Please turn this in as an RMarkdown document. You can either add your solution in Latex or you can write it by hand and input a scanned version or picture into the R Markdown. 'Turn it in' by uploading to your GitHub repository. 
 
 \begin{enumerate}
@@ -13,19 +12,20 @@ Here you will practice what you learned in the maximum likelihood estimation. Pl
 $$P(x=k|\lambda)=\frac{\lambda^k e^{-\lambda}}{k!}.$$
 Answer the following questions:
     \begin{enumerate}
-    \item Using {\bf ggplot}, plot the Poisson pmf for $k=0,1,\ldots,10$ when $\lambda=5$. 
-    \item Asummining ${\bf x}$ is observed, give the likelihood $L(\lambda|{\bf x})$ and log-likelihood $l(\lambda|{\bf x})$ functions.
+    \item Using {\bf ggplot}, plot the Poisson pmf for $k=0,1,\ldots,10$ when $\lambda=5$.
+    \includegraphics[scale = 0.3]{poisson.png}
+    \item Assuming ${\bf x}$ is observed, give the likelihood $L(\lambda|{\bf x})$ and log-likelihood $l(\lambda|{\bf x})$ functions.
     \begin{enumerate}
         \item Likelihood Function \\
 $$L(\lambda|x_1,\ldots,x_{10})=\prod_{i = 1}^{10} \frac{\lambda^{x_i} e^{-\lambda}}{x_i!}.$$ \\
         \item Log-Likelihood function \\
         $$l(\lambda|x_1,\ldots,x_{n})=\ln(\prod_{i = 1}^{n} \frac{\lambda^{x_i} e^{-\lambda}}{x_i!}).$$ \\
         Simplifying:
-        $$l(\lambda|x_1,\ldots,x_{n})=\prod_{i = 1}^{n} \ln(\frac{\lambda^{x_i} e^{-\lambda}}{x_i!}).$$ 
+        $$l(\lambda|x_1,\ldots,x_{n})=\sum_{i = 1}^{n} \ln(\frac{\lambda^{x_i} e^{-\lambda}}{x_i!}).$$ 
         
-        $$l(\lambda|x_1,\ldots,x_{n})=\prod_{i = 1}^{n} ({x_i}\ln(\lambda) + \ln(e^{-\lambda})-\ln({x_i!})).$$ 
+        $$l(\lambda|x_1,\ldots,x_{n})=\sum_{i = 1}^{n} ({x_i}\ln(\lambda) + \ln(e^{-\lambda})-\ln({x_i!})).$$ 
         
-        $$l(\lambda|x_1,\ldots,x_{n})=\prod_{i = 1}^{n} ({x_i}\ln(\lambda) - {\lambda}-\ln({x_i!})).$$ 
+        $$l(\lambda|x_1,\ldots,x_{n})=\sum_{i = 1}^{n} ({x_i}\ln(\lambda) - {\lambda}-\ln({x_i!})).$$ 
         
         $$l(\lambda|x_1,\ldots,x_{n})=-n\lambda+\ln(\lambda)\sum_{i = 1}^{n} {x_i} -\sum_{i=1}^{n}\ln({x_i!}).$$ 
         
@@ -35,24 +35,26 @@ $$L(\lambda|x_1,\ldots,x_{10})=\prod_{i = 1}^{10} \frac{\lambda^{x_i} e^{-\lambd
         \item Calculate the derivative of log likelihood function with respect to $\lambda$.
         $$\frac{d}{d\lambda}(l(\lambda|x_1,\ldots,x_{n}))=\frac{d}{d\lambda}(-n\lambda+\ln(\lambda)\sum_{i = 1}^{n} {x_i} -\sum_{i=1}^{n}\ln({x_i!})).$$ 
         
-        $$\frac{d}{d\lambda}(l(\lambda|x_1,\ldots,x_{n}))=-10+\frac{1}{\lambda}\sum_{i = 1}^{n} {x_i}.$$ 
+        $$\frac{d}{d\lambda}(l(\lambda|x_1,\ldots,x_{n}))=-n+\frac{1}{\lambda}\sum_{i = 1}^{n} {x_i}.$$ 
         
         \item Let's set the derivative to 0 to get the MLE.
-        $$-10+\frac{1}{\lambda}\sum_{i = 1}^{n} {x_i} = 0$$ 
+        $$-n+\frac{1}{\lambda}\sum_{i = 1}^{n} {x_i} = 0$$ 
         
         $$\lambda = \frac{1}{n}\sum_{i = 1}^{n} {x_i}$$ 
     \end{enumerate}
-    \item Show that your estimator is in fact a maximum: i.e., check the boundary values of the log-likelihood, and check that the second derivative of the log-likelihood is zero everywhere.
+    \item Show that your estimator is in fact a maximum: i.e., check the boundary values of the log-likelihood, and check that the second derivative of the log-likelihood is negative everywhere.
     \begin{enumerate}
-        \item Checking if the second derivative is zero everywhere.
+        \item Checking if the second derivative is negative everywhere.
         $$\frac{d^2}{d\lambda^2}(l(\lambda|x_1,\ldots,x_{n}))=\frac{-1}{\lambda^2}\sum_{i = 1}^{n} {x_i}.$$ 
+        \item For $\lambda > 0$, the MLE will be negative everywhere
     \end{enumerate}
     \end{enumerate}
 
 \item (20 points) Suppose ${\bf x}=(x_1,\ldots, x_N)^T$ are $iid$ random variables with p.d.f. given by
 $$f(x|\theta)=\theta x^{\theta-1},\ 0\le x\le 1,\ 0<\theta<\infty.$$
     \begin{enumerate}
-    \item Using {\bf ggplot}, plot the pdf for an individual $x_i$ given $\theta=0.5$ and also for $\theta=5$. 
+    \item Using {\bf ggplot}, plot the pdf for an individual $x_i$ given $\theta=0.5$ and also for $\theta=5$. \\
+    \includegraphics[scale = 0.3]{theta.png}
     \item Give the likelihood $L(\theta|{\bf x})$ and log-likelihood $l(\theta|{\bf x})$ functions.
     \begin{enumerate}
         \item Likelihood Function \\
@@ -74,7 +76,13 @@ $$L(\theta|x_1,\ldots,x_{n})=\prod_{i = 1}^{n}\theta x_{i}^{\theta-1}$$ \\
         $$\theta = \frac{-n}{\sum_{i = 1}^{n}\ln(x_{i})} $$
 
     \end{enumerate}
-    \item Show that your estimator is in fact a maximum: i.e., check the boundary values of the log-likelihood, and check that the second derivative of the log-likelihood is zero everywhere.
+    \item Show that your estimator is in fact a maximum: i.e., check the boundary values of the log-likelihood, and check that the second derivative of the log-likelihood is negative everywhere.
+    \begin{enumerate}
+        \item Checking whether the second derivative is negative everywhere.
+        $$\frac{d^2}{d\theta^2}(l(\theta|x_1,\ldots,x_{n})) = \frac{-n}{\theta^2}$$
+        \item For any $\theta > 0$, the MLE is negative everywhere
+        \item As you can see from the graph that the boundary conditions are satisfied since the function goes to 0, so the function we got will be the MLE.
+    \end{enumerate}
     \end{enumerate}
 
 \item (20 points) Suppose ${\bf x}=(x_1,\ldots, x_N)^T$ are $iid$ random variables from a $Normal(0,\sigma^2)$ distribution. The pdf is given by
@@ -102,7 +110,8 @@ Find the Maximum Likelihood Estimator (MLE) $\hat\sigma^2$ for $\sigma^2$. Is it
     $$n = \sum_{i=1}^{n}{\frac{x_i^2}{\sigma^2}}$$
     $$\sigma^2 = \sum_{i=1}^{n}\frac{x_i^2}{n}$$
     
-    \item Yes, the MLE is what I thought it would be since the maximum likelihood estimated for $\sigma^2$ is the variance of the measurements
+    \item Yes, the MLE is what I thought it would be apart from the $(n-1)$ fact, when we calculate the variance of a distribution it is usually $(n-1)$ in the denominator and not $n$. Thus, this MLE, is fractionally smaller than the variance.
 \end{enumerate}
 \end{enumerate}
 
+\end{document}
