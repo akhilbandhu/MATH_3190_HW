@@ -1,0 +1,61 @@
+---
+title: "MATH 3190 Homework 6"
+author: "Regularization, Cross-validation, Dimension reduction"
+date: "Due 4/11/2022"
+output: pdf_document
+
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+suppressPackageStartupMessages({
+    library(tidyverse)
+    library(DT)
+})
+```
+
+In this homework you will practice using cross-validation to fit data using LASSO and K-nearest neighbor models. Please upload to your GitHub an R Markdown document answering the following:   
+
+\begin{enumerate}
+\item (20 points) A researcher wants to determine how employee salaries at a certain company are related to the length of employment, previous experience, and education. The researcher selects eight employees from the company and obtains the data shown below (the dataset is available as a tibble in the .Rmd). 
+
+\begin{center}            
+\begin{tabular}{|cccc|}\hline
+Salary      & Employment        & Experience        & Education\\\hline
+\$57,310       & 10                & 2                 & 16 \\
+\$57,380       & 5                 & 6                 & 16 \\
+\$54,135       & 3                 & 1                 & 12 \\
+\$56,985       & 6                 & 5                 & 14 \\
+\$58,715       & 8                 & 8                 & 16 \\
+\$60,620       & 20                & 0                 & 12 \\
+\$59,200       & 8                 & 4                 & 18 \\
+\$60,320       & 14                & 6                 & 17 \\\hline
+\end{tabular}
+\end{center}            
+
+```{r salary, include=FALSE}
+salary <- tibble(
+    Salary = c(57310.00, 57380.00, 54135.00, 56985.00, 58715.00, 60620.00, 59200.00, 60320.00),
+    Employment = c(10,5,3,6,8,20,8,14),
+    Experience = c(2,6,1,5,8,0,4,6),
+    Education = c(16,16,12,14,16,12,18,17)
+)
+
+knitr::kable(salary)
+summary(princomp(salary[,-1]))
+prcomp(salary[,-1])$rotation
+
+```
+    \begin{enumerate}
+    \item Fit a standard least squares regression model to these data and interpret the results. After looking at the statistical significance of the $\beta$s, which covariates would you include in a final model? 
+    \item Use \texttt{glmnet} to fit a LASSO model to these covariates. Try $\lambda$=1000, 800, 500, and 1. How do the results compare to each other and the least squares model? 
+    \item Which LASSO model (i.e. $\lambda$) would you select? (note you are not just restricted to $\lambda$ values of 1000, 800, 500, and 1). Justify your answer. 
+    \item Use \texttt{glmnet} to fit a Ridge regression model to these data. Try $\lambda$=1000, 800, 500, and 1. How do these results differ from the least squares and LASSO models?  
+    \end{enumerate}
+   
+   \item (20 points) The \texttt{cereal.csv} dataset provides nutritional information on nearly 80 common breakfast cereals. The 'rating' column provides an overall rating for each cereal (possibly from Consumer Reports?). Use a LASSO regression model to identify the best predictors of cereal rating. Evaluate the model for $\lambda$ values of 8, 5, 3, and 1 (among others). Which $\lambda$ would you choose and why? Which covariates best explain the rating? 
+   
+    
+   \item (20 points) An automobile consulting company wants to understand the factors on which the pricing of cars depends. Use an Elastic Net model and the \texttt{car\_price\_prediction.csv} dataset to determine which variables are significant in predicting the price of a car. Use cross-validation to find an optimal value for $\lambda$. Interpret your final model.  
+   
+
+\end{enumerate}
