@@ -30,18 +30,18 @@ coef(lasso_fit1)
 
 # lambda = 800
 lasso_fit2 <- glmnet(as.matrix(salary[,c(2,3,4)]), as.matrix(salary[,1]), lambda = 800, alpha = 1)
-lasso_fit2
+lasso_fit2$beta
 coef(lasso_fit2)
 
 # lambda = 500
 lasso_fit3 <- glmnet(as.matrix(salary[,c(2,3,4)]), as.matrix(salary[,1]), lambda = 500, alpha = 1)
-lasso_fit3
+lasso_fit3$beta
 coef(lasso_fit3)
 
 # lambda = 1
 lasso_fit4 <- glmnet(as.matrix(salary[,c(2,3,4)]), as.matrix(salary[,1]), lambda = 1, alpha = 1)
 lasso_fit4
-coef(lasso_fit4)
+coef(lasso_fit4) 
 
 # now lets cross validate
 cv_lasso <- cv.glmnet(as.matrix(salary[,c(2,3,4)]), as.matrix(salary[,1]), alpha = 1)
@@ -68,7 +68,7 @@ ridge_fit3 <- glmnet(as.matrix(salary[,c(2,3,4)]), as.matrix(salary[,1]), lambda
 ridge_fit3
 coef(ridge_fit3)
 
-# lambda = 500
+# lambda = 1
 ridge_fit4 <- glmnet(as.matrix(salary[,c(2,3,4)]), as.matrix(salary[,1]), lambda = 1, alpha = 0)
 ridge_fit4
 coef(ridge_fit4)
@@ -203,7 +203,7 @@ car_price_prediction <- car_price_prediction[,-6]
 
 # All indicators are now done. So we can model
 # Elastic net model
-x <- as.matrix(car_price_prediction[, c(1,2,4,5,6,7,8)])
+x <- as.matrix(car_price_prediction[, c(4:18)])
 y <- as.matrix(car_price_prediction[, 3])
 car_elastic1 <- glmnet(x,y)
 car_elastic1$call
@@ -211,6 +211,10 @@ plot(car_elastic)
 
 # cross validation
 cv_elastic <- cv.glmnet(x,y)
-
-
-
+best_lambda_car <- cv_elastic$lambda.min
+plot(cv_elastic)
+The # final model 
+elastic_car <- glmnet(x,y,lambda = best_lambda_car)
+summary(elastic_car)
+elastic_car$beta
+elastic_car$a0
