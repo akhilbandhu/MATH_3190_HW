@@ -339,11 +339,21 @@ lm_fit_lasso <- lm(total_win_percentage~.-TeamName-avg_total_score-avg_away_scor
 pca_basketball <- prcomp(new_basketball[2:11], scale = TRUE)
 pca_basketball
 
-plot(pca)
+plot(pca_basketball)
 
-
-pca_data_basket <- as.data.frame(pca_basketball$x[, 1:6]) # extract first two columns and convert to data frame
+pca_data_basket <- as.data.frame(pca_basketball$x[, 1:2]) # extract first two columns and convert to data frame
 pca_data_basket <- cbind(pca_data_basket, new_basketball$total_win_percentage) # bind by columns
-colnames(pca_data_basket) <- c("PC1", "PC2","PC3","PC4","PC5", "PC6", "Species") # change column names
+colnames(pca_data_basket) <- c("PC1", "PC2", "Win Percentage") # change column names
+
+ggplot(pca_data_basket) +
+  aes(PC1, PC2, color = 1, shape = 1) + # define plot area
+  geom_point(size = 2) +
+  scale_shape_identity()# adding data points
 
 
+umap_basketball <- umap(new_basketball[,2:11])
+data.frame(umap_basketball$layout) %>%
+  ggplot(aes(X1,X2, color = 1, shape = 1))+
+  geom_point() +
+  scale_shape_identity() +
+  coord_fixed(ratio = 1)
