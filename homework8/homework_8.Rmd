@@ -1,0 +1,57 @@
+---
+title: "MATH 3190 Homework 8"
+author: "Supervised and Unsupervised Machine Learning"
+date: "Due 4/26/2022"
+output: pdf_document
+
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This homework will focus on unsupervised clustering and dimension reduction, support vector machines, random forests, and neural networks. Please complete your work in Rmarkdown (.html output) and post your work to your GitHub page.
+
+The $\texttt{TBnanostring.rds}$ dataset contains gene expression measurements in the blood for 107 TB-related genes for 179 patients with either active tuberculosis infection (TB) or latent TB infection (LTBI). Load these data into R ($\texttt{TBnanostring <- readRDS(`TBnanostring.rds')}$). The TB status is found in the first column of the data frame, followed by the genes in the subsequent columns, and the rows represent each individual patient. Complete the following analyses:  
+
+\begin{enumerate}
+    \item (20 points) Apply a UMAP clustering of the dataset, and plot the result using $\texttt{ggplot}$. Color the points based on TB status. How does UMAP preform in clustering these samples?
+    \item (20 points) Use hierarchical clustering for classification and exploration of this dataset. Do the following:
+     \begin{enumerate}
+        \item Make a dendrogram of the hierarchical clustering result. Color the sample names based on TB status (see example code embedded in this RMarkdown) 
+        
+```{r, eval=F, echo=F}
+hc <- hclust(dist(USArrests))
+## make a dendrogram object, color the labels, make them smaller using the dendextend package
+library(dendextend)
+dend <- as.dendrogram(hc)
+dend <- set(dend, "labels_cex", .25)
+regions <- list(
+  Northeast = c("Connecticut", "Maine", "Massachusetts", "New Hampshire", "Rhode Island", "Vermont", "New Jersey", "New York", "Pennsylvania"),
+  Midwest = c("Illinois", "Indiana", "Michigan", "Ohio", "Wisconsin", "Iowa", "Kansas", "Minnesota", "Missouri", "Nebraska", "North Dakota", "South Dakota"),
+  South = c("Delaware", "Florida", "Georgia", "Maryland", "North Carolina", "South Carolina", "Virginia","West Virginia", "Alabama", "Kentucky", "Mississippi",
+            "Tennessee", "Arkansas", "Louisiana", "Oklahoma", "Texas"),
+  West = c("Arizona", "Colorado", "Idaho", "Montana", "Nevada", "New Mexico", "Utah", "Wyoming", "Alaska", "California", "Hawaii", "Oregon", "Washington")
+)
+labels_colors(dend) <- sapply(rownames(USArrests)[order.dendrogram(dend)], grep, regions)
+
+## plot the dendrogram
+plot(dend)
+```
+
+        \item Cut the tree into 2 clusters. What are the proportions of TB/LTBI samples in each cluster? 
+        \item Make a clustered heatmap of these data (see the lecture slides). 
+    \end{enumerate}
+    \item (40 points) Split the dataset into "training" and "testing" sets using a 70/30 partition, using $\texttt{set.seed(0)}$ and the $\texttt{createDataPartition}$ function from the $\texttt{caret}$ package (code for this is `hiding' in this .Rmd file!). Apply the following machine learning methods to make a predictive biomarker to distinguish between the TB and control samples. Use the $\texttt{caret}$ package and cross validation to find the "finalModel" parameters to for each method.  
+```{r, echo=F, eval=FALSE}
+set.seed(0)
+training_indexs <- createDataPartition(TBnanostring$TB_Status, p = .3, list = F)
+training <- TBnanostring[training_indexs, ]
+testing  <- TBnanostring[-training_indexs, ]
+```
+    \begin{enumerate}
+        \item Support Vector Machine (try linear, radial, and polynomial kernels)
+        \item Random Forest 
+        \item Feedforward Perceptron Neural Network
+    \end{enumerate}
+    \item (20 points) Compare the overall accuracy of the prediction methods for each of the machine learning tools in the previous problem. Which one performs the best?  
+\end{enumerate}

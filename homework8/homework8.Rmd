@@ -1,0 +1,183 @@
+---
+title: "Homework 8"
+author: "Akhil Anand"
+date: "4/21/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(umap)
+library(tidyverse)
+library(ggplot2)
+library(dendextend)
+library(caret)
+library(e1071)
+library(randomForest)
+library(neuralnet)
+```
+
+# Dataset Reading
+
+```{r tb}
+TBnanostring <- readRDS("~/MATH-3190/MATH_3190_HW/homework8/TBnanostring.rds")
+```
+
+## Question 1
+
+Applying umap clustering to the dataset depending on TB status.
+UMAP seems to be doing well in clustering the dataset
+
+```{r umap}
+umap_tb <- umap(TBnanostring[,-1])
+data.frame(umap_tb$layout, TB_Status=as.factor(TBnanostring$TB_Status)) %>%
+  ggplot(aes(X1,X2, color = TB_Status, shape = TB_Status))+
+  geom_point() +
+  xlab("UMAP 1") +
+  ylab("UMAP 2") +
+  ggtitle("UMAP Plot")
+
+```
+
+## Question 2 
+
+Hierarchical Clustering
+Let's make a dendogram, color the labels and make them smaller.
+
+```{r hclust}
+hc <- hclust(dist(TBnanostring[,-1]))
+
+dend <- as.dendrogram(hc)
+dend <- set(dend, "labels_cex", .25)
+labels_colors(dend) <- as.numeric(TBnanostring$TB_Status[order.dendrogram(dend)]=="LTBI")+1
+
+## plot the dendrogram
+plot(dend)
+```
+# Cutree
+Cutting into two clusters
+There are 78 samples of TB in cluster 1 and 101 samples of LTBI
+
+```{r cutree}
+clusters <- cutree(hc,2)
+table(clusters)
+```
+# Heatmap
+Now, lets create a heatmap.
+
+```{r heatmap}
+heatmap(as.matrix(TBnanostring[,-1]), col = RColorBrewer::brewer.pal(5, "Spectral"))
+```
+
+
+## Question 3
+Split the dataset into "training" and "testing" sets using a 70/30 partition
+ 
+```{r supervised}
+set.seed(0)
+training_indexs <- createDataPartition(TBnanostring$TB_Status, p = .3, list = F)
+training <- TBnanostring[training_indexs, ]
+testing  <- TBnanostring[-training_indexs, ]
+```
+
+# Support Vector Machine
+We will use the svm function from the e1071 library. We will perform cross validation using 
+the train control function
+
+```{r svm}
+svmfit1 <- svm(TB_Status ~ ., data = training, kernel = "linear", cost = 10, scale = FALSE)
+print(svmfit1)
+# Linear function 
+# svm_fit1 <- train(TB_Status~., data = training, method = "svmLinear")
+# svm_fit1$finalModel
+  
+svmfit2 <- svm(TB_Status ~ ., data = training, kernel = "radial", cost = 10, scale = FALSE) 
+print(svmfit2)
+
+svmfit3 <- svm(TB_Status ~ ., data = training, kernel = "polynomial", cost = 10, scale = FALSE) 
+print(svmfit3)
+
+# Cross validation
+train_svm_linear_cv <- train(TB_Status ~ ., method = "svmLinear",data = training,
+                             trControl = control)
+train_svm_linear_cv$finalModel
+
+train_svm_radial_cv <- train(TB_Status ~ ., method = "svmRadial",data = training,
+                             trControl = control)
+train_svm_radial_cv$finalModel
+
+train_svm_poly_cv <- train(TB_Status ~ ., method = "svmPoly",data = training,
+                           trControl = control)
+train_svm_poly_cv$finalModel
+
+```
+
+# Random Forest 
+
+```{r randomforest}
+rf_fit <- randomForest(TB_Status~., data = TBnanostring)
+plot(rf_fit)
+```
+
+
+# Feedforward Neural Network
+Let's use the train function from caret
+
+```{r neuralnet}
+# nn_tb <- neuralnet(TB_Status ~ ., data=training, hidden=10)
+# plot(nn_tb)
+
+# nn_pred <- compute(nn_tb, testing)
+# nn_class <- ifelse(nn_pred$net.result[,1]>0.5, 1, 0)
+# nn_class
+# nn_pred$net.result
+# test <- ifelse(testing$TB_Status == "TB", 0,1)
+# test<- as.factor(test)
+# nn_class <- as.factor(nn_class)
+# confusionMatrix(nn_class, test)$overall["Accuracy"]
+
+nnet_tb <- train(TB_Status~., data = training, method = "nnet", trace = F)
+nnet_tb$finalModel
+NeuralNetTools::plotnet(nnet_tb)
+```
+
+
+# Predictions
+Now, let's get some support vector machine predictions
+```{r svm_predictions}
+svm_linear_pred <- predict(train_svm_linear_cv, testing)
+svm_linear_accuracy <- confusionMatrix(svm_linear_pred, testing$TB_Status)$overall['Accuracy']
+
+svm_radial_pred <- predict(train_svm_radial_cv, testing)
+svm_radial_accuracy <- confusionMatrix(svm_radial_pred, testing$TB_Status)$overall['Accuracy']
+svm_radial_accuracy
+
+svm_poly_pred <- predict(train_svm_poly_cv, testing)
+svm_poly_accuracy <- confusionMatrix(svm_poly_pred, testing$TB_Status)$overall['Accuracy']
+svm_poly_accuracy
+
+```
+
+Random forest predictions
+
+```{r rf_predictions}
+rf_pred <- predict(rf_fit, testing)
+rf_accuracy <- confusionMatrix(rf_pred, testing$TB_Status)$overall['Accuracy']
+rf_accuracy
+```
+
+Neural Net predictions
+
+```{r nnet_predictions}
+nnet_pred <- predict(nnet_tb, testing)
+nnet_accuracy <- confusionMatrix(nnet_pred, testing$TB_Status)$overall['Accuracy']
+nnet_accuracy
+```
+
+
+
+ 
+ 
+ 
+ 
+ 
