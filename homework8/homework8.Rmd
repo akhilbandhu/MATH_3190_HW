@@ -85,6 +85,7 @@ We will use the svm function from the e1071 library. We will perform cross valid
 the train control function
 
 ```{r svm}
+control <- trainControl(method = "repeatedcv", number = 10, p = .9)
 svmfit1 <- svm(TB_Status ~ ., data = training, kernel = "linear", cost = 10, scale = FALSE)
 print(svmfit1)
 # Linear function 
@@ -115,7 +116,7 @@ train_svm_poly_cv$finalModel
 # Random Forest 
 
 ```{r randomforest}
-rf_fit <- randomForest(TB_Status~., data = TBnanostring)
+rf_fit <- randomForest(TB_Status~., data = training)
 plot(rf_fit)
 ```
 
@@ -175,6 +176,18 @@ nnet_accuracy
 ```
 
 
+# Accuracies
+Radial Support Vector Machine performs the best.
+
+```{r accuracies}
+c(
+  SVM_Linear = svm_linear_accuracy,
+  SVM_Radial = svm_radial_accuracy,
+  SVM_Poly = svm_poly_accuracy,
+  RF = rf_accuracy,
+  Neural = nnet_accuracy
+)
+```
 
  
  
